@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>$TROLLKING Live Info</title>
+  <style>
+    body {
+      background: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      color: #ffd700;
+      text-shadow: 0 0 10px red;
+    }
+    .info-box {
+      margin: 20px auto;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid yellow;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 500px;
+    }
+    a {
+      display: block;
+      color: #00ffff;
+      margin: 10px 0;
+      font-weight: bold;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h1>$TROLLKING - LIVE DATA</h1>
+
+  <div class="info-box" id="liveData">
+    <p>Loading data from Google Sheet...</p>
+  </div>
+
+  <script>
+    const sheetID = '1AYz4hxExAdtrgKchIDSK88_p_-S7FxT0XzXVQd3aasw';
+    const sheetName = 'Sheet1'; // Change this if your sheet name is different
+    const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
+
+    fetch(url)
+      .then(res => res.text())
+      .then(data => {
+        const jsonData = JSON.parse(data.substr(47).slice(0, -2));
+        const row = jsonData.table.rows[0].c;
+
+        const contract = row[0]?.v || 'Not Found';
+        const twitter = row[1]?.v || '#';
+        const pump = row[2]?.v || '#';
+        const dex = row[3]?.v || '#';
+
+        document.getElementById('liveData').innerHTML = `
+          <div><strong>Contract:</strong><br>${contract}</div>
+          <a href="${twitter}" target="_blank">🔗 Twitter (X)</a>
+          <a href="${pump}" target="_blank">🚀 Pump.fun</a>
+          <a href="${dex}" target="_blank">📊 Dexscreener</a>
+        `;
+      })
+      .catch(err => {
+        document.getElementById('liveData').innerHTML = '❌ Error fetching data.';
+        console.error('Fetch error:', err);
+      });
+  </script>
+</body>
+</html>
